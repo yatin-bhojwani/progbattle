@@ -95,3 +95,5 @@ different directories and routes:
 #### detailed explanation with demo of the website is uploaded in the video attached in the DemoVideo section
 ## Testing Routes
 Below are details (with images) of how to test different routes in postman: 
+
+![Signup](/assets/signup_route)
