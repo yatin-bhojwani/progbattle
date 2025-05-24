@@ -1,0 +1,7 @@
+# Virtual environment (root level)
+/venv/
+
+# Python (backend)
+backend/__pycache__/
+backend/*.py[cod]
+backend/.env
