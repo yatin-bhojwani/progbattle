@@ -96,4 +96,4 @@ different directories and routes:
 ## Testing Routes
 Below are details (with images) of how to test different routes in postman: 
 
-![Signup](/assets/signup_route)
+![Signup](/assets/signup_route.png)
