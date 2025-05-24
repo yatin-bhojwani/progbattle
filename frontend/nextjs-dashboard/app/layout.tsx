@@ -7,8 +7,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>{children}</body>
-    </html>
+   <html lang="en">
+  <body className={`${inter.className} antialiased min-h-screen bg-gradient-to-b from-gray-900 to-purple-900 text-gray-100`}>
+    {children}
+  </body>
+</html>
   );
 }

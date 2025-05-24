@@ -32,7 +32,11 @@ export default function NameInHeader(){
   }, []);
 
   return (
-                   <h1 className="text-5xl font-bold text-white ml-4 flex">Hello, {username}</h1>
+ <h1 className="ml-4 text-4xl font-bold sm:text-5xl">
+  <span className="bg-gradient-to-r from-purple-600 to-pink-700 bg-clip-text text-transparent">
+    Hello, {username}
+  </span>
+</h1>
   );
 
 }

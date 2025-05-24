@@ -55,53 +55,59 @@ export default function TeamFileUpload({team_name, token,setHasUploadedBot}: {te
   };
 
   return (
-    <div className="rounded-lg bg-gray-50 p-4 border border-gray-200 h-full flex flex-col">
-      {/* Team Name Header */}
-      <h2 className="text-lg font-bold text-purple-800 mb-4 flex items-center">
-        <PaperClipIcon className="h-5 w-5 mr-2" />
-        YOUR TEAM: {teamName}
-      </h2>
+    <div className="rounded-xl bg-gray-900/80 p-6 border border-purple-500/20 h-full flex flex-col backdrop-blur-md">
+  {/* Team Name Header */}
+  <h2 className="text-lg font-bold text-purple-300 mb-4 flex items-center">
+    <PaperClipIcon className="h-5 w-5 mr-2 text-purple-400" />
+    YOUR TEAM: <span className="text-pink-400 ml-1">{teamName}</span>
+  </h2>
 
-      {/* File Upload Area */}
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
-        <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 mb-4 bg-white">
-          <ArrowUpTrayIcon className="h-10 w-10 text-gray-400 mb-2" />
-          <label className="cursor-pointer">
-            <span className="text-purple-600 font-medium">Click to upload</span> or drag and drop
-            
-            <input 
-              type="file" 
-              onChange={handleFileChange}
-              className="hidden"
-              accept=".py" // Specify accepted file types
-            />
-          </label>
-          <label>only .py files accepted</label>
-          {selectedFile && (
-            <p className="mt-2 text-sm text-gray-600 truncate max-w-full">
-              <span className="font-medium">Selected:</span> {selectedFile.name}
-            </p>
-          )}
-        </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          disabled={!selectedFile || isSubmitting}
-          className={`w-full py-2 px-4 rounded-md font-medium text-white flex items-center justify-center
-            ${!selectedFile ? 'bg-gray-400 cursor-not-allowed' : 
-              isSubmitting ? 'bg-purple-400' : 'bg-purple-500 hover:bg-purple-600'}`}
-        >
-          {isSubmitting ? (
-            'Uploading...'
-          ) : (
-            <>
-              Submit File
-              <ArrowUpTrayIcon className="h-4 w-4 ml-2" />
-            </>
-          )}
-        </button>
-      </form>
+  {/* File Upload Area */}
+  <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-purple-500/30 rounded-lg p-6 mb-4 bg-gray-800/50">
+      <ArrowUpTrayIcon className="h-10 w-10 text-purple-400/70 mb-2" />
+      <label className="cursor-pointer text-center">
+        <span className="text-purple-300 font-medium hover:text-pink-400 transition-colors">Click to upload</span> or drag and drop
+        <input 
+          type="file" 
+          onChange={handleFileChange}
+          className="hidden"
+          accept=".py"
+        />
+      </label>
+      <p className="mt-1 text-sm text-purple-400/70">Only .py files accepted</p>
+      {selectedFile && (
+        <p className="mt-2 text-sm text-pink-300 truncate max-w-full">
+          <span className="font-medium">Selected:</span> {selectedFile.name}
+        </p>
+      )}
     </div>
+
+    {/* Submit Button */}
+    <button
+      type="submit"
+      disabled={!selectedFile || isSubmitting}
+      className={`w-full py-2 px-4 rounded-lg font-medium text-white flex items-center justify-center transition-all
+        ${!selectedFile ? 'bg-gray-700 cursor-not-allowed text-gray-400' : 
+          isSubmitting ? 'bg-gradient-to-r from-purple-600/70 to-pink-600/70' : 
+          'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg'}`}
+    >
+      {isSubmitting ? (
+        <>
+          Uploading...
+          <svg className="animate-spin h-4 w-4 ml-2" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </>
+      ) : (
+        <>
+          Submit File
+          <ArrowUpTrayIcon className="h-4 w-4 ml-2" />
+        </>
+      )}
+    </button>
+  </form>
+</div>
   );
 }

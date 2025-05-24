@@ -66,33 +66,51 @@ export default function SingUpForm() { //name error should be signup lol but i a
 
 
   return (
-    <form className="space-y-3" onSubmit={handleSubmit}>
-      <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        <h1 className={`${lusitana.className} mb-3 text-2xl`}>
-          Please sign up to continue.
-        </h1>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-purple-900">
+    {/* Modern Header */}
+    <header className="sticky top-0 z-10 bg-gray-900/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Logo/Center Title */}
+        <div className="flex flex-1 justify-center">
+          <h1 className="text-3xl font-bold text-white">
+            <span className="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
+              ProgBattle
+            </span>
+          </h1>
+        </div>
+      </div>
+    </header>
 
-
+    {/* Signup Form */}
+    <section className="mx-auto flex max-w-md flex-col items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
+      <form 
+        className="w-full space-y-4 rounded-xl bg-gray-900/80 p-8 shadow-lg ring-1 ring-purple-500/20 backdrop-blur-md" 
+        onSubmit={handleSubmit}
+      >
+        <div className="text-center">
+          <h2 className={`${lusitana.className} text-2xl font-bold text-white`}>
+            Join the Battle
+          </h2>
+          <p className="mt-2 text-purple-200">
+            Create your account to begin
+          </p>
+        </div>
 
         {error && (
-        <div className="mb-4 p-2 text-red-500 text-sm flex items-center">
-          <ExclamationCircleIcon className="h-5 w-5 mr-2" />
-          {error}
-        </div>
-      )}
+          <div className="flex items-center rounded-lg bg-pink-900/50 p-3 text-sm text-pink-200">
+            <ExclamationCircleIcon className="mr-2 h-5 w-5" />
+            {error}
+          </div>
+        )}
 
-
-        <div className="w-full">
+        <div className="space-y-4">
           <div>
-            <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-              htmlFor="email"
-            >
+            <label className="mb-2 block text-sm font-medium text-purple-200" htmlFor="email">
               Email
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="block w-full rounded-lg border border-purple-500/30 bg-gray-800 py-3 pl-10 pr-4 text-sm text-white placeholder-purple-400/70 outline-none transition-all focus:border-pink-500 focus:ring-2 focus:ring-pink-500/50"
                 id="email"
                 type="email"
                 name="email"
@@ -101,63 +119,72 @@ export default function SingUpForm() { //name error should be signup lol but i a
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-purple-400" />
             </div>
           </div>
 
           <div>
-            <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-              htmlFor="username"
-            >
+            <label className="mb-2 block text-sm font-medium text-purple-200" htmlFor="username">
               Username
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="block w-full rounded-lg border border-purple-500/30 bg-gray-800 py-3 pl-10 pr-4 text-sm text-white placeholder-purple-400/70 outline-none transition-all focus:border-pink-500 focus:ring-2 focus:ring-pink-500/50"
                 id="username"
-                type="username"
+                type="text"
                 name="username"
-                placeholder="Enter your username"
+                placeholder="Choose a username"
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
-              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <AtSymbolIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-purple-400" />
             </div>
           </div>
 
-          
-          
-          <div className="mt-4">
-            <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-              htmlFor="password"
-            >
+          <div>
+            <label className="mb-2 block text-sm font-medium text-purple-200" htmlFor="password">
               Password
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="block w-full rounded-lg border border-purple-500/30 bg-gray-800 py-3 pl-10 pr-4 text-sm text-white placeholder-purple-400/70 outline-none transition-all focus:border-pink-500 focus:ring-2 focus:ring-pink-500/50"
                 id="password"
                 type="password"
                 name="password"
-                placeholder="Enter password"
+                placeholder="Create a password"
                 required
                 minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
+              <KeyIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-purple-400" />
             </div>
           </div>
         </div>
-        <Button className="mt-4 w-full"  type="submit"  disabled={isLoading}>
-          {isLoading ? 'Creating...' : 'Create Account'}
-          
+
+        <Button 
+          className="mt-6 w-full transform rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 py-3 font-medium text-white shadow-lg transition-all hover:from-purple-700 hover:to-pink-700 hover:shadow-purple-500/30 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-gray-900 active:scale-[0.98]" 
+          type="submit" 
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="h-4 w-4 animate-spin" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              Creating account...
+            </span>
+          ) : (
+            'Create Account'
+          )}
         </Button>
-       
-      </div>
-    </form>
+      </form>
+    </section>
+
+    {/* Gradient Bottom Decoration */}
+    <div className="absolute bottom-0 h-32 w-full bg-gradient-to-t from-gray-900 to-transparent" />
+  </div>
   );
 }
