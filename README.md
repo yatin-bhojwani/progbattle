@@ -96,4 +96,24 @@ different directories and routes:
 ## Testing Routes
 Below are details (with images) of how to test different routes in postman: 
 
+**1.Signup: post route and takes json as input**
 ![Signup](/assets/signup_route.png)
+
+**2.Login: post route and takes json as input**
+![Login](/assets/login_route.png)
+
+**3.Auth: for futher routes put your token from login in the bearer token auth**
+![Auth](/assets/authexample.png)
+
+**4.Create Team: post route and takes http header as input**
+![TeamCreate](/assets/teamcreate_route.png)
+
+**5.Upload Bot: post route that takes form-data as input**
+![Upload](/assets/uploadbot_route.png)
+
+**6.Get Bot: get route**
+![GetBot](/assets/getbot_route.png)
+
+**7.Leaderboard: doesnt need auth token**
+![Leaderboard](/assets/leaderboard_route.png)
+
