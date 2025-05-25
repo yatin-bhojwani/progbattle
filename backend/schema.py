@@ -34,3 +34,15 @@ class UserResponse(UserBase):
         from_attributes  = True
 
 
+class TrueUser(BaseModel):
+    email: EmailStr
+    username: str | None = None
+    team: str ="None"
+
+class UserCreate(UserBase):
+    password: str    
+
+
+class TeamJoin(UserBase):
+    name: str
+    

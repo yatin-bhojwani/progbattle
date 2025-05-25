@@ -1,13 +1,14 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PaperClipIcon, ArrowUpTrayIcon } from '@heroicons/react/24/outline';
 import { Dispatch, SetStateAction } from 'react';
 
 export default function TeamFileUpload({team_name, token,setHasUploadedBot}: {team_name: string, token: string,  setHasUploadedBot:Dispatch<SetStateAction<boolean | null>> }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [attempts, setAttempts] = useState<number>(0)
 
   // Static team data (replace with your actual team name)
   const teamName = team_name;
@@ -39,7 +40,9 @@ export default function TeamFileUpload({team_name, token,setHasUploadedBot}: {te
     });
 
     if (!response.ok) throw new Error('Upload failed');
-    
+    const data = await response.json()
+    console.log(data)
+    setAttempts(data.matches)
     // Success handling
      setHasUploadedBot(true)
     alert("File uploaded successfully!");
@@ -54,13 +57,34 @@ export default function TeamFileUpload({team_name, token,setHasUploadedBot}: {te
    
   };
 
+  useEffect(()=>{
+     const getSubmissions = async () => {
+      const response = await fetch('http://localhost:8000/submissions', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`  // 👈 Attach here
+      },
+      
+    });
+      const data = await response.json()
+      setAttempts(data.matches)
+      
+     }
+     getSubmissions()
+  },[])
+
   return (
-    <div className="rounded-xl bg-gray-900/80 p-6 border border-purple-500/20 h-full flex flex-col backdrop-blur-md">
+   <div className="rounded-xl bg-gray-900/80 p-6 border border-purple-500/20 h-full flex flex-col backdrop-blur-md">
   {/* Team Name Header */}
-  <h2 className="text-lg font-bold text-purple-300 mb-4 flex items-center">
-    <PaperClipIcon className="h-5 w-5 mr-2 text-purple-400" />
-    YOUR TEAM: <span className="text-pink-400 ml-1">{teamName}</span>
-  </h2>
+  <div className="flex justify-between items-center mb-4">
+    <h2 className="text-lg font-bold text-purple-300 flex items-center">
+      <PaperClipIcon className="h-5 w-5 mr-2 text-purple-400" />
+      YOUR TEAM: <span className="text-pink-400 ml-1">{teamName}</span>
+    </h2>
+    <span className="text-sm bg-purple-900/50 text-purple-200 px-3 py-1 rounded-full">
+      {5-attempts} submissions left
+    </span>
+  </div>
 
   {/* File Upload Area */}
   <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
