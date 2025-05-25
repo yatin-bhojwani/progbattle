@@ -21,7 +21,7 @@ cd progbattle
 
 ### Install dependencies:
 #### for the backend:
-Create a virtual enviornment and start it
+Create a virtual enviornment and start it in the root directory
 
 ```bash
 python3 -m venv myenv
