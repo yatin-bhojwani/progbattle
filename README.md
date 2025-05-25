@@ -31,7 +31,7 @@ source myenv/bin/activate
 for windows 
 ```bash
 python -m venv myenv
-source .\myenv\Scripts\activate 
+.\myenv\Scripts\activate 
 ```
 Install requirements
 ```bash
