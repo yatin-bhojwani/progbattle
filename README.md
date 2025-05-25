@@ -31,8 +31,9 @@ Install requirements
 ```bash
 pip install -r requirements.txt
 ```
-Create an env file
+Create an env file in backend
 ```
+cd backend
 cp .env.example .env
 ```
 To Start the backend server
