@@ -23,9 +23,15 @@ cd progbattle
 #### for the backend:
 Create a virtual enviornment and start it in the root directory
 
+for linux/mac
 ```bash
 python3 -m venv myenv
-source myenv/bin/activate
+source myenv/bin/activate 
+```
+for windows 
+```bash
+python -m venv myenv
+source .\myenv\Scripts\activate 
 ```
 Install requirements
 ```bash
