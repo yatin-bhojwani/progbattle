@@ -7,7 +7,8 @@ import PongAnimation from './matchanimation';
 import { MatchFrame } from '../lib/matchframe';
 
 
-export default function MatchResultsManager({token, setHasUploadedBot}: {token: string, setHasUploadedBot:Dispatch<SetStateAction<boolean | null>>}) {
+
+export default function MatchResultsManager({team_name, token, setHasUploadedBot}: {team_name: string ,token: string, setHasUploadedBot:Dispatch<SetStateAction<boolean | null>>}) {
 
   const [activeRound, setActiveRound] = useState<'round1' | 'round2'>('round1');
    const [showAnimation, setShowAnimation] = useState(false);
@@ -132,8 +133,8 @@ export default function MatchResultsManager({token, setHasUploadedBot}: {token: 
 
   return (
 <div className="rounded-xl bg-gray-900/80 p-6 border border-purple-500/20 h-full flex flex-col backdrop-blur-md">
-  {/* Header */}
-  <h2 className="text-lg font-bold text-purple-300 mb-4">Match Results</h2>
+  {/* Header */} 
+  <h2 className="text-lg font-bold text-purple-300 mb-4">Match Results of team {team_name}</h2>
   
   {/* Round Toggle */}
   <div className="flex border-b border-purple-500/20 mb-4">

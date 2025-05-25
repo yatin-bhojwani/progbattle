@@ -68,8 +68,8 @@ export default function Page(){
 
              <div>
                 {hasJoinedTeam?
-                   (hasUploadedBot?(<MatchResultsManager token = {tokenName} setHasUploadedBot={setHasUploadedBot}/>):(<TeamFileUpload team_name={teamName} token={tokenName}  setHasUploadedBot={setHasUploadedBot}/>))  :
-                   ( <JoinTeamForm  setHasJoinedTeam = {setHasJoinedTeam}  />)}
+                   (hasUploadedBot?(<MatchResultsManager team_name={teamName} token = {tokenName} setHasUploadedBot={setHasUploadedBot}/>):(<TeamFileUpload team_name={teamName} token={tokenName}  setHasUploadedBot={setHasUploadedBot}/>))  :
+                   ( <JoinTeamForm  setHasJoinedTeam = {setHasJoinedTeam} token = {tokenName} />)}
              </div>
     ); 
 }    

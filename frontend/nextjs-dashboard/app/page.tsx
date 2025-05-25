@@ -45,14 +45,7 @@ export default function Page() {
             </span>
           </h2>
           
-          <div className="mt-12 flex justify-center gap-4">
-            <Link
-              href="/round2"
-              className="flex items-center gap-2 rounded-full bg-pink-600 px-8 py-4 text-lg font-semibold text-white transition-all hover:bg-pink-700 hover:shadow-xl hover:shadow-pink-500/30"
-            >
-              Enter Battle <ArrowRightIcon className="h-6 w-6" />
-            </Link>
-          </div>
+          
         </div>
       </section>
 

@@ -12,8 +12,8 @@ from typing import Annotated
 
 import psycopg2
 from database import get_db
-from models import Users
-from schema import UserCreate, User, TokenData, Token, LoginRequest, UserResponse
+from models import Users, TrueUsers, Team, MatchLogs
+from schema import UserCreate, User, TokenData, Token, LoginRequest, UserResponse, TeamJoin
 from database import get_db
 from utils import (
     get_password_hash,
@@ -30,6 +30,7 @@ import engine1
 
 import csv
 from io import StringIO
+import uuid
 
 
 ## imports for file uploads
@@ -60,7 +61,7 @@ bearer_scheme = HTTPBearer(auto_error=False)
 # Helper function to get user by email
 def get_user(db: Session, email: str):
     try:
-        return db.query(Users).filter(Users.email == email).first()
+        return db.query(TrueUsers).filter(TrueUsers.email == email).first()
     except Exception as e:
         print(f"Database error: {e}")
         return None
@@ -117,7 +118,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
             detail="Email already registered"
         )
     try:
-        new_user = Users(
+        new_user = TrueUsers(
             email=user.email,
             hashed_password=get_password_hash(user.password),
             username=user.username
@@ -141,7 +142,7 @@ async def login(
     db: Session = Depends(get_db)
 ):
     # 1. Authenticate
-    user = db.query(Users).filter(Users.email == credentials.email).first()
+    user = db.query(TrueUsers).filter(TrueUsers.email == credentials.email).first()
     if not user or not verify_password(credentials.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -165,42 +166,77 @@ async def login(
 
 ## need to add error fetching to this route
 @app.post("/teamcreate")
-async def protected_route(user : User = Depends(get_current_user), team_name: Annotated[str | None, Header()] = None , db: Session=Depends(get_db)):
-    user.team_name = team_name
+async def protected_route(user : TrueUsers = Depends(get_current_user), team_name: Annotated[str | None, Header()] = None , db: Session=Depends(get_db)):
+    # user.team_name = team_name
+    # db.commit()
+    # db.refresh(user)
+    # return {"team": f"{team_name}"}    
+    
+    if db.query(Team).filter_by(name=team_name).first():
+        raise HTTPException(status_code=400, detail="Team already exists")
+    db_team = Team(name=team_name)
+    user.team = db_team
+    db.add(db_team)
     db.commit()
-    db.refresh(user)
-    return {"team": f"{team_name}"}    
 
+
+@app.post("/teamjoin")
+def join_team(user:TrueUsers = Depends(get_current_user), team_name: Annotated[str | None, Header()] = None,db: Session = Depends(get_db)):
+    team = db.query(Team).filter_by(name=team_name).first()
+    
+    
+    if not team or not user.username:
+        raise HTTPException(status_code=404, detail="Team or User not found")
+    if user.team_id:  # User already in a team
+        raise HTTPException(status_code=400, detail="User already in a team")
+    if len(team.members) >= 4:  # Team full
+        raise HTTPException(status_code=400, detail="Team is full (max 4 members)")
+    
+    user.team = team  # two sided relationship
+    db.commit()
 
 
 ##-------------------- FILE UPLOAD SYSTEM ----------------------------
 os.makedirs(UPLOAD_DIR, exist_ok=True) ##checks if the directory exists otherwise makes it
 
 @app.post("/uploadbot")
-async def upload_file(file: UploadFile = File(...), user : User = Depends(get_current_user), db: Session=Depends(get_db)):
+async def upload_file(file: UploadFile = File(...), user : TrueUsers = Depends(get_current_user), db: Session=Depends(get_db)):
     
     #making sure that the user is part of a team before uploading a file
-    if(user.team_name == "None"):
+    if user.team_id is None:
         raise HTTPException(400, "Team not joined")
+    if (len(user.team.matches)>=5):
+            raise HTTPException(400, "5 matches uploaded")
+
     try:
         # Save file locally
-        userfilename = f"{user.team_name}.py"
-        file_path = os.path.join(UPLOAD_DIR, userfilename) ##check for debug originally second para was file.filename
+        #print(len(user.team.matches))
+       
+
+        team = db.query(Team).filter_by(id=user.team_id).first()
+        filename = f"{uuid.uuid4()}.py"
+        file_path = os.path.join(UPLOAD_DIR, filename) ##check for debug originally second para was file.filename
         with open(file_path, "wb") as buffer:
             buffer.write(await file.read())
 
-        user.file = userfilename
+        gameData = MatchLogs(file = file_path)
+        gameData.team = team
         #print(user.file)
+        db.add(gameData)
+        
         db.commit()
-        db.refresh(user)
-
+        #db.refresh(user)
+        team.activefile=f"{filename}"
         #start a match, find score and update it
-        user.score = engine1.play_game(f"userbots\{user.file}", "bot1.py", user.team_name, "system")
+        gameData.score, gameData.log = engine1.play_game(f"userbots/{filename}", "bot1.py")
+        team.score = gameData.score
+        team.activelog = gameData.log
         db.commit()
-        db.refresh(user)
+        #db.refresh(user)
 
         return {
-            "score": f"{user.score}"
+            "score": f"{gameData.score}",
+            "matches": len(user.team.matches) if user.team else 0
         }
 
 
@@ -219,22 +255,14 @@ async def upload_file(file: UploadFile = File(...), user : User = Depends(get_cu
     
 # TODO: implement deletion of the file from userbots
 @app.get("/deletebot")
-async def delete_file(user: User = Depends(get_current_user), db: Session=Depends(get_db)):
+async def delete_file(user: TrueUsers = Depends(get_current_user), db: Session=Depends(get_db)):
         try:
-            # Delete the physical file first
-            file_path = Path(f"C:/Users/Yatin/Documents/pclubTask/backend/userbots/{user.file}")  # Adjust this path
-            
-            if file_path.exists():  # Check if file exists
-                os.unlink(file_path)  # Delete the file
-            else:
-                # File doesn't exist but record says it should - might want to log this
-                pass
-            
             # Update database record
-            user.file = "None"
-            user.score = 0
+            team = db.query(Team).filter_by(id=user.team_id).first()
+            team.activefile="None"
+            
             db.commit()
-            db.refresh(user)
+            
             
            
             
@@ -247,7 +275,7 @@ async def delete_file(user: User = Depends(get_current_user), db: Session=Depend
 
 @app.get("/getbot")
 async def get_file(user: User = Depends(get_current_user)):
-    file_path = f"userbots\\{user.team_name}.py"  # Replace with actual file path
+    file_path = f"userbots\\{user.team.activefile}"  # Replace with actual file path
     
     # Check if file exists
     if not os.path.exists(file_path):
@@ -258,31 +286,53 @@ async def get_file(user: User = Depends(get_current_user)):
     )
 
 @app.get("/user", response_model=UserResponse)
-async def get_file(user: User = Depends(get_current_user)):
-    return user
+async def get_file(user: TrueUsers = Depends(get_current_user)):
+    return{
+        "username": user.username,
+        "email": user.email,
+        "team_name": user.team.name if user.team else "None" ,
+        "score": user.team.score if user.team else 0,
+        "file": user.team.activefile if user.team else "None"
+    }
+@app.get("/getteams")
+async def get_teams(db: Session = Depends(get_db)):
+    teams = db.query(Team).all()
+    return [{
+        "id": team.id,
+        "name": team.name,
+        "members": len(team.members)  # Requires relationship setup
+    } for team in teams]
 
 
 @app.get("/leaderboard")
 async def leaderboard(db: Session=Depends(get_db)):
-    results = db.query(Users.team_name, Users.score)\
-         .filter(Users.team_name != "None")\
-         .order_by(Users.score.desc())\
+    results = db.query(Team.name, Team.score)\
+         .filter(Team.name != "None")\
+         .order_by(Team.score.desc())\
          .limit(16)\
          .all()
+    #print (results)
     return [{"team_name": team_name, "score": score} for team_name, score in results]
 
 
 @app.get("/match-data")
-async def get_match_data(user: User = Depends(get_current_user)):
-    with open(f"usermatches/{user.team_name}system.csv", mode="r") as file:
+async def get_match_data(user: TrueUsers = Depends(get_current_user)):
+    # for matches in user.team.matches:
+    #     if(matches.file == user.team.active)
+    with open(f"{user.team.activelog}", mode="r") as file:
         csv_data = file.read()
     
     # Parse CSV to JSON
     reader = csv.DictReader(StringIO(csv_data))
     return {"data": list(reader)}
         
-       
-       
+
+@app.get('/submissions')
+async def get_submissions(user: TrueUsers = Depends(get_current_user)):      
+    return {
+            
+            "matches": len(user.team.matches) if user.team else 0
+        }    
         
         
         

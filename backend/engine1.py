@@ -3,6 +3,7 @@ import importlib.util
 import time
 import csv
 import random
+import uuid
 
 GRID_SIZE = 30
 PADDLE_WIDTH = 2
@@ -53,15 +54,15 @@ def get_game_state(ball, paddle1, paddle2, player):
         "player": player
     }
 
-def play_game(bot1_path, bot2_path, team_1, team_2):
+def play_game(bot1_path, bot2_path):
     bot1 = PlayerWrapper(bot1_path)
     bot2 = PlayerWrapper(bot2_path)
 
     scores = {"bot1": 0, "bot2": 0}
     round_num = 0
-
+    filename = f"usermatches/{uuid.uuid4()}.csv"
     # Open CSV log file
-    with open(f"usermatches/{team_1}{team_2}.csv", "w", newline="") as f:
+    with open(filename, "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["step", "ball_x", "ball_y", "paddle1_x", "paddle2_x", "bot1_action", "bot2_action", "score_bot1", "score_bot2"])
 
@@ -116,7 +117,7 @@ def play_game(bot1_path, bot2_path, team_1, team_2):
     if(scores["bot1"] == 5):
         scores["bot1"] = 2*scores["bot1"] + (5-scores["bot2"]) 
         
-    return scores["bot1"]
+    return scores["bot1"], filename
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
